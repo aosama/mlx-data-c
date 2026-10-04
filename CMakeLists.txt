@@ -43,6 +43,7 @@ set(mlxdc-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/buffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/error.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/graph.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/ops.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/sample.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/stream.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/tokenizer.cpp
