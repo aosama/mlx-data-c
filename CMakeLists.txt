@@ -39,8 +39,10 @@ endif()
 
 set(mlxdc-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/array.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/buffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/error.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/sample.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/stream.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/string.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/vector_int64.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/vector_string.cpp)
