@@ -11,6 +11,7 @@
 
 #include "mlx/data/c/array.h"
 #include "mlx/data/c/error.h"
+#include "mlx/data/c/sample.h"
 #include "mlx/data/c/string.h"
 #include "mlx/data/c/vector_int64.h"
 #include "mlx/data/c/vector_string.h"

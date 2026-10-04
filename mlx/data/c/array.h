@@ -43,7 +43,8 @@ mlxd_array mlxd_array_new(void);
 /**
  * Free the array handle. The underlying buffer survives while other
  * references (e.g. in samples) exist. Safe no-op returning 0 on an empty
- * handle.
+ * handle. The handle is unusable after this call; obtain a fresh one with
+ * mlxd_array_new().
  */
 int mlxd_array_free(mlxd_array arr);
 
