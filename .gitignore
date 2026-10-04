@@ -24,3 +24,6 @@ _deps/
 
 # xcode
 *.xcodeproj/
+
+# Local planning notes (machine-specific paths)
+PLAN.md
