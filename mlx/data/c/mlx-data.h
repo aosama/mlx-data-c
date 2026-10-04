@@ -15,6 +15,7 @@
 #include "mlx/data/c/buffer.h"
 #include "mlx/data/c/closure.h"
 #include "mlx/data/c/error.h"
+#include "mlx/data/c/file_fetcher.h"
 #include "mlx/data/c/graph.h"
 #include "mlx/data/c/ops.h"
 #include "mlx/data/c/sample.h"

@@ -8,6 +8,7 @@
 #include "mlx/data/c/bpe.h"
 #include "mlx/data/c/buffer.h"
 #include "mlx/data/c/closure.h"
+#include "mlx/data/c/file_fetcher.h"
 #include "mlx/data/c/stream.h"
 #include "mlx/data/c/trie.h"
 
@@ -966,6 +967,79 @@ int mlxd_stream_read_from_tar_if(
     const char* prefix,
     const char* tar_prefix,
     bool from_key,
+    bool nested,
+    int num_threads);
+
+/* ---------------- fetcher-backed variants ---------------- */
+
+/**
+ * The _with_fetcher variants of the readers and read_from_tar fetch
+ * remote files through `fetcher` before local processing. An EMPTY
+ * fetcher handle returns status 1 with a clear message — pass NULL
+ * semantics by using the fetcher-less originals instead.
+ *
+ * csv/line readers: same contracts as their originals.
+ */
+
+int mlxd_stream_csv_reader_with_fetcher(
+    mlxd_stream* out,
+    const char* filename,
+    char sep,
+    char quote,
+    const char* local_prefix,
+    mlxd_file_fetcher fetcher);
+
+int mlxd_stream_line_reader_with_fetcher(
+    mlxd_stream* out,
+    const char* filename,
+    const char* key,
+    bool unzip,
+    const char* local_prefix,
+    mlxd_file_fetcher fetcher);
+
+int mlxd_stream_csv_reader_from_key_with_fetcher(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    const char* key,
+    char sep,
+    char quote,
+    bool from_memory,
+    const char* local_prefix,
+    mlxd_file_fetcher fetcher);
+
+int mlxd_stream_line_reader_from_key_with_fetcher(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    const char* key,
+    const char* dst_key,
+    bool from_memory,
+    bool unzip,
+    const char* local_prefix,
+    mlxd_file_fetcher fetcher);
+
+int mlxd_buffer_read_from_tar_with_fetcher(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    const char* tarkey,
+    const char* ikey,
+    const char* okey,
+    const char* prefix,
+    const char* tar_prefix,
+    bool from_key,
+    mlxd_file_fetcher fetcher,
+    bool nested,
+    int num_threads);
+
+int mlxd_stream_read_from_tar_with_fetcher(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    const char* tarkey,
+    const char* ikey,
+    const char* okey,
+    const char* prefix,
+    const char* tar_prefix,
+    bool from_key,
+    mlxd_file_fetcher fetcher,
     bool nested,
     int num_threads);
 

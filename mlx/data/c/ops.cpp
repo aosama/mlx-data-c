@@ -10,6 +10,7 @@
 #include "mlx/data/c/private/bpe.h"
 #include "mlx/data/c/private/buffer.h"
 #include "mlx/data/c/private/closure.h"
+#include "mlx/data/c/private/file_fetcher.h"
 #include "mlx/data/c/private/stream.h"
 #include "mlx/data/c/private/trie.h"
 
@@ -2500,6 +2501,160 @@ extern "C" int mlxd_stream_buffered(
         buffer_size,
         mlxd_buffer_transform_fn_(mlxd_closure_buffer_state_(on_refill)),
         num_thread);
+  });
+}
+
+/* ---------------- fetcher-backed variants ---------------- */
+
+extern "C" int mlxd_stream_csv_reader_with_fetcher(
+    mlxd_stream* out,
+    const char* filename,
+    char sep,
+    char quote,
+    const char* local_prefix,
+    mlxd_file_fetcher fetcher) {
+  try {
+    if (filename == nullptr) {
+      throw std::invalid_argument("mlxd_stream_csv_reader: filename is NULL");
+    }
+    mlxd_stream_set_(
+        *out,
+        mlx::data::stream_csv_reader(
+            filename,
+            sep,
+            quote,
+            local_prefix ? local_prefix : "",
+            mlxd_file_fetcher_get_(fetcher)));
+  } catch (std::exception& e) {
+    mlxd_error(e.what());
+    return 1;
+  }
+  return 0;
+}
+
+extern "C" int mlxd_stream_line_reader_with_fetcher(
+    mlxd_stream* out,
+    const char* filename,
+    const char* key,
+    bool unzip,
+    const char* local_prefix,
+    mlxd_file_fetcher fetcher) {
+  try {
+    if (filename == nullptr || key == nullptr) {
+      throw std::invalid_argument("mlxd_stream_line_reader: NULL filename/key");
+    }
+    mlxd_stream_set_(
+        *out,
+        mlx::data::stream_line_reader(
+            filename,
+            std::string(key),
+            unzip,
+            local_prefix ? local_prefix : "",
+            mlxd_file_fetcher_get_(fetcher)));
+  } catch (std::exception& e) {
+    mlxd_error(e.what());
+    return 1;
+  }
+  return 0;
+}
+
+extern "C" int mlxd_stream_csv_reader_from_key_with_fetcher(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    const char* key,
+    char sep,
+    char quote,
+    bool from_memory,
+    const char* local_prefix,
+    mlxd_file_fetcher fetcher) {
+  try {
+    if (key == nullptr) {
+      throw std::invalid_argument("mlxd_stream_csv_reader_from_key: key is NULL");
+    }
+    mlxd_stream_set_(
+        *out,
+        mlxd_stream_get_(dataset).csv_reader_from_key(
+            std::string(key),
+            sep,
+            quote,
+            from_memory,
+            local_prefix ? local_prefix : "",
+            mlxd_file_fetcher_get_(fetcher)));
+  } catch (std::exception& e) {
+    mlxd_error(e.what());
+    return 1;
+  }
+  return 0;
+}
+
+extern "C" int mlxd_stream_line_reader_from_key_with_fetcher(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    const char* key,
+    const char* dst_key,
+    bool from_memory,
+    bool unzip,
+    const char* local_prefix,
+    mlxd_file_fetcher fetcher) {
+  try {
+    if (key == nullptr || dst_key == nullptr) {
+      throw std::invalid_argument("mlxd_stream_line_reader_from_key: NULL key");
+    }
+    mlxd_stream_set_(
+        *out,
+        mlxd_stream_get_(dataset).line_reader_from_key(
+            std::string(key),
+            std::string(dst_key),
+            from_memory,
+            unzip,
+            local_prefix ? local_prefix : "",
+            mlxd_file_fetcher_get_(fetcher)));
+  } catch (std::exception& e) {
+    mlxd_error(e.what());
+    return 1;
+  }
+  return 0;
+}
+
+extern "C" int mlxd_buffer_read_from_tar_with_fetcher(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    const char* tarkey,
+    const char* ikey,
+    const char* okey,
+    const char* prefix,
+    const char* tar_prefix,
+    bool from_key,
+    mlxd_file_fetcher fetcher,
+    bool nested,
+    int num_threads) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.read_from_tar(
+        mlxd_key_(tarkey, "read_from_tar"), mlxd_key_(ikey, "read_from_tar"),
+        mlxd_key_(okey, "read_from_tar"), mlxd_path_(prefix),
+        mlxd_path_(tar_prefix), from_key, mlxd_file_fetcher_get_(fetcher),
+        nested, num_threads);
+  });
+}
+
+extern "C" int mlxd_stream_read_from_tar_with_fetcher(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    const char* tarkey,
+    const char* ikey,
+    const char* okey,
+    const char* prefix,
+    const char* tar_prefix,
+    bool from_key,
+    mlxd_file_fetcher fetcher,
+    bool nested,
+    int num_threads) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.read_from_tar(
+        mlxd_key_(tarkey, "read_from_tar"), mlxd_key_(ikey, "read_from_tar"),
+        mlxd_key_(okey, "read_from_tar"), mlxd_path_(prefix),
+        mlxd_path_(tar_prefix), from_key, mlxd_file_fetcher_get_(fetcher),
+        nested, num_threads);
   });
 }
 
