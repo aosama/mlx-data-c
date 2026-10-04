@@ -1,0 +1,26 @@
+# Build directories
+build/
+build-*/
+out/
+cmake-build-*/
+
+# FetchContent / dependency caches
+_deps/
+
+# macOS
+.DS_Store
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+
+# Compiled artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dSYM/
+
+# xcode
+*.xcodeproj/
