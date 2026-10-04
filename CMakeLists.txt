@@ -42,6 +42,7 @@ set(mlxdc-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/bpe.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/buffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/closure.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/core.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/error.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/file_fetcher.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/c/graph.cpp
