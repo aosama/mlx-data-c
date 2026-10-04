@@ -9,6 +9,7 @@
 #include "mlx/data/c/error.h"
 #include "mlx/data/c/private/bpe.h"
 #include "mlx/data/c/private/buffer.h"
+#include "mlx/data/c/private/closure.h"
 #include "mlx/data/c/private/stream.h"
 #include "mlx/data/c/private/trie.h"
 
@@ -2381,6 +2382,124 @@ extern "C" int mlxd_stream_squeeze_dims_if(
         cond, mlxd_key_(ikey, "squeeze_dims"),
         std::vector<int>(dims, dims + dims_num),
         mlxd_key_(okey, "squeeze_dims"));
+  });
+}
+
+/* ---------------- user callbacks ---------------- */
+
+extern "C" int mlxd_buffer_key_transform(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    const char* ikey,
+    mlxd_closure_array closure,
+    const char* okey) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.key_transform(
+        mlxd_key_(ikey, "key_transform"),
+        mlxd_key_transform_fn_(mlxd_closure_array_state_(closure)),
+        mlxd_key_(okey, "key_transform"));
+  });
+}
+
+extern "C" int mlxd_buffer_key_transform_if(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    bool cond,
+    const char* ikey,
+    mlxd_closure_array closure,
+    const char* okey) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.key_transform_if(
+        cond, mlxd_key_(ikey, "key_transform"),
+        mlxd_key_transform_fn_(mlxd_closure_array_state_(closure)),
+        mlxd_key_(okey, "key_transform"));
+  });
+}
+
+extern "C" int mlxd_stream_key_transform(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    const char* ikey,
+    mlxd_closure_array closure,
+    const char* okey) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.key_transform(
+        mlxd_key_(ikey, "key_transform"),
+        mlxd_key_transform_fn_(mlxd_closure_array_state_(closure)),
+        mlxd_key_(okey, "key_transform"));
+  });
+}
+
+extern "C" int mlxd_stream_key_transform_if(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    bool cond,
+    const char* ikey,
+    mlxd_closure_array closure,
+    const char* okey) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.key_transform_if(
+        cond, mlxd_key_(ikey, "key_transform"),
+        mlxd_key_transform_fn_(mlxd_closure_array_state_(closure)),
+        mlxd_key_(okey, "key_transform"));
+  });
+}
+
+extern "C" int mlxd_buffer_sample_transform(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    mlxd_closure_sample closure) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.sample_transform(
+        mlxd_sample_transform_fn_(mlxd_closure_sample_state_(closure)));
+  });
+}
+
+extern "C" int mlxd_buffer_sample_transform_if(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    bool cond,
+    mlxd_closure_sample closure) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.sample_transform_if(
+        cond,
+        mlxd_sample_transform_fn_(mlxd_closure_sample_state_(closure)));
+  });
+}
+
+extern "C" int mlxd_stream_sample_transform(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    mlxd_closure_sample closure) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.sample_transform(
+        mlxd_sample_transform_fn_(mlxd_closure_sample_state_(closure)));
+  });
+}
+
+extern "C" int mlxd_stream_sample_transform_if(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    bool cond,
+    mlxd_closure_sample closure) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.sample_transform_if(
+        cond,
+        mlxd_sample_transform_fn_(mlxd_closure_sample_state_(closure)));
+  });
+}
+
+extern "C" int mlxd_stream_buffered(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    int64_t buffer_size,
+    mlxd_closure_buffer on_refill,
+    int num_thread) {
+  return mlxd_dataset_op_(out, dataset, [&](auto& ds) {
+    return ds.buffered(
+        buffer_size,
+        mlxd_buffer_transform_fn_(mlxd_closure_buffer_state_(on_refill)),
+        num_thread);
   });
 }
 

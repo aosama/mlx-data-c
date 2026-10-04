@@ -7,6 +7,7 @@
 
 #include "mlx/data/c/bpe.h"
 #include "mlx/data/c/buffer.h"
+#include "mlx/data/c/closure.h"
 #include "mlx/data/c/stream.h"
 #include "mlx/data/c/trie.h"
 
@@ -1286,6 +1287,75 @@ int mlxd_stream_squeeze_dims_if(
     const int* dims,
     size_t dims_num,
     const char* okey);
+
+/* ---------------- user callbacks ---------------- */
+
+/**
+ * Applies the closure to `ikey`'s array of every sample. The callback
+ * contract and lifetime rules are documented in closure.h; a callback
+ * returning an empty handle makes the data access fail with status 1.
+ */
+int mlxd_buffer_key_transform(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    const char* ikey,
+    mlxd_closure_array closure,
+    const char* okey);
+int mlxd_buffer_key_transform_if(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    bool cond,
+    const char* ikey,
+    mlxd_closure_array closure,
+    const char* okey);
+int mlxd_stream_key_transform(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    const char* ikey,
+    mlxd_closure_array closure,
+    const char* okey);
+int mlxd_stream_key_transform_if(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    bool cond,
+    const char* ikey,
+    mlxd_closure_array closure,
+    const char* okey);
+
+/**
+ * Applies the closure to every sample (adding, removing, or replacing
+ * keys).
+ */
+int mlxd_buffer_sample_transform(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    mlxd_closure_sample closure);
+int mlxd_buffer_sample_transform_if(
+    mlxd_buffer* out,
+    mlxd_buffer dataset,
+    bool cond,
+    mlxd_closure_sample closure);
+int mlxd_stream_sample_transform(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    mlxd_closure_sample closure);
+int mlxd_stream_sample_transform_if(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    bool cond,
+    mlxd_closure_sample closure);
+
+/**
+ * Background loading with a user refill hook: keeps up to `buffer_size`
+ * samples in flight, calling the closure to refill. The callback may
+ * run on worker threads (see closure.h for the thread-safety note).
+ */
+int mlxd_stream_buffered(
+    mlxd_stream* out,
+    mlxd_stream dataset,
+    int64_t buffer_size,
+    mlxd_closure_buffer on_refill,
+    int num_thread);
 
 /* ---------------- tokenization ---------------- */
 

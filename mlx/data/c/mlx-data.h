@@ -13,6 +13,7 @@
 #include "mlx/data/c/array.h"
 #include "mlx/data/c/bpe.h"
 #include "mlx/data/c/buffer.h"
+#include "mlx/data/c/closure.h"
 #include "mlx/data/c/error.h"
 #include "mlx/data/c/graph.h"
 #include "mlx/data/c/ops.h"
