@@ -1,0 +1,51 @@
+# Find MLXDC
+#
+# Defines the following variables:
+#
+#   MLXDC_FOUND         : True if mlx-data-c is found
+#   MLXDC_INCLUDE_DIRS  : Include directory
+#   MLXDC_LIBRARY_DIRS  : Library directory
+#   MLXDC_LIBRARIES     : Libraries to link against
+
+@PACKAGE_INIT@
+
+# The exported mlxdata/mlxdc interfaces reference these targets when the
+# corresponding optional codecs were found when mlx-data-c was built;
+# Threads::Threads is always present. Define them before the targets.
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+if(@MLXD_C_HAD_SNDFILE@)
+  find_dependency(SndFile)
+endif()
+if(@MLXD_C_HAD_SAMPLERATE@)
+  find_dependency(SampleRate)
+endif()
+
+# When mlx-data-c was built against an installed mlx-data, that package
+# stays external and must be found before the exported targets resolve.
+if(@MLXD_C_USE_SYSTEM_MLX_DATA@)
+  find_dependency(MLXData)
+endif()
+
+include(@PACKAGE_MLXDC_CMAKE_INSTALL_DIR@/MLXDCTargets.cmake)
+
+# mlx-data's codec libraries are consumed by the static archives. They
+# are resolved here, at consume time, so no machine-specific paths leak
+# into the exported targets; anything CMake cannot find falls back to a
+# bare -l flag for the consumer's own search path.
+set(MLXDC_CODECS turbojpeg bz2 zstd lzma z sndfile FLAC opus vorbis
+                 vorbisenc ogg)
+foreach(mlxdc_codec IN LISTS MLXDC_CODECS)
+  find_library(MLXDC_CODEC_${mlxdc_codec}_LIB ${mlxdc_codec})
+  if(MLXDC_CODEC_${mlxdc_codec}_LIB)
+    target_link_libraries(mlxdc INTERFACE ${MLXDC_CODEC_${mlxdc_codec}_LIB})
+  else()
+    target_link_libraries(mlxdc INTERFACE -l${mlxdc_codec})
+  endif()
+endforeach()
+
+set_and_check(MLXDC_LIBRARY_DIRS @PACKAGE_CMAKE_INSTALL_LIBDIR@)
+set_and_check(MLXDC_INCLUDE_DIRS @PACKAGE_CMAKE_INSTALL_INCLUDEDIR@)
+set(MLXDC_LIBRARIES mlxdc)
+
+check_required_components(MLXDC)

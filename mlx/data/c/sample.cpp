@@ -58,6 +58,9 @@ extern "C" int mlxd_sample_keys(mlxd_vector_string* out, mlxd_sample sample) {
 extern "C" int
 mlxd_sample_get(mlxd_array* out, mlxd_sample sample, const char* key) {
   try {
+    if (key == nullptr) {
+      throw std::runtime_error("mlxd_sample_get: key must not be NULL");
+    }
     mlx::data::Sample& dict = mlxd_sample_get_(sample);
     auto it = dict.find(key);
     if (it == dict.end()) {
@@ -87,6 +90,9 @@ mlxd_sample_set_key(mlxd_sample sample, const char* key, mlxd_array value) {
 
 extern "C" int mlxd_sample_erase(mlxd_sample sample, const char* key) {
   try {
+    if (key == nullptr) {
+      throw std::runtime_error("mlxd_sample_erase: key must not be NULL");
+    }
     mlx::data::Sample& dict = mlxd_sample_get_(sample);
     if (dict.erase(key) == 0) {
       return 2;

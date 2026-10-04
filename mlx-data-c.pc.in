@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: mlx-data-c
+Description: C API for mlx-data, Apple's data loading library for MLX
+URL: https://github.com/aosama/mlx-data-c
+Version: @MLXD_C_VERSION@
+Requires.private:
+Libs: -L${libdir} -lmlxdc -lmlxdata -l@MLXD_C_PC_RUNTIME_LIB@
+Libs.private: -lturbojpeg -lbz2 -lzstd -llzma -lz -lsndfile -lFLAC -lopus -lvorbisenc -lvorbis -logg
+Cflags: -I${includedir}

@@ -65,7 +65,7 @@ int mlxd_sample_keys(mlxd_vector_string* out, mlxd_sample sample);
  * same buffer, which stays valid after the sample is modified or freed).
  *
  * @returns 0 on success, 2 if `key` is absent, 1 if `sample` is an empty
- * handle.
+ * handle or `key` is NULL.
  */
 int mlxd_sample_get(mlxd_array* out, mlxd_sample sample, const char* key);
 
@@ -80,7 +80,8 @@ int mlxd_sample_set_key(mlxd_sample sample, const char* key, mlxd_array value);
 /**
  * Removes `key` from the sample.
  *
- * @returns 0 on success, 2 if `key` is absent, 1 on an empty handle.
+ * @returns 0 on success, 2 if `key` is absent, 1 on an empty handle or a
+ * NULL key.
  */
 int mlxd_sample_erase(mlxd_sample sample, const char* key);
 
